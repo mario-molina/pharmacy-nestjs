@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ProductLike } from "../../product-likes/entities/product-like.entity";
 
 @Entity('product')
 export class Product {
@@ -16,4 +17,6 @@ export class Product {
 
   @Column({ type: 'datetime' })
   created_date: Date;
+
+  @OneToMany(type => ProductLike, productLike => productLike.product) likes: ProductLike[];
 }
