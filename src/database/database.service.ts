@@ -12,7 +12,7 @@ export class MysqlTypeormConfigService implements TypeOrmOptionsFactory {
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '4DMINroot',
+      password: null,
       database: 'drug_store',
       entities: [resolve(this.SOURCE_PATH + '/**/*.entity.ts')],
       synchronize: true,
