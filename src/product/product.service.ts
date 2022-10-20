@@ -4,19 +4,28 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserDto } from 'src/user/dto/user.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ProductService {
   private readonly productRepository;
+  private readonly userService;
 
   constructor(
     @InjectRepository(Product) productRepository: Repository<Product>,
+    userService: UserService
   ) {
     this.productRepository = productRepository;
+    this.userService = userService;
   }
 
-  async create(product: CreateProductDto) {
+  async create(user: UserDto, product: CreateProductDto, ) {
+    let username = user.username;
+    // get the user from db    
+    const owner = await this.userService.findOne({ where: { username } });
     product.created_date = new Date(product.created_date);
+    product.owner = owner;
     await this.productRepository.insert(product);
     return product;
   }
