@@ -1,5 +1,5 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductLike } from "../../product-likes/entities/product-like.entity";
 
 @Entity('product')
@@ -19,7 +19,13 @@ export class Product {
   @Column({ type: 'datetime' })
   created_date: Date;
 
-  @OneToMany(type => ProductLike, productLike => productLike.product) likes: ProductLike[];
+  @OneToMany(type => ProductLike, productLike => productLike.product)
+  likes: ProductLike[];
 
-  @ManyToOne(type => User) owner?: User;
+  // add column explicitly here
+  @Column({ name: 'owner' }) // --> name of the column in database
+  owner: number;  // --> object field
+  @ManyToOne(type => User)
+  @JoinColumn({ name: 'owner' }) // --> name of the column in database
+  userId: User;
 }

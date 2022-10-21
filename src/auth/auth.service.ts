@@ -50,7 +50,7 @@ export class AuthService {
         const user: JwtPayload = { username };    
         const accessToken = this.jwtService.sign(user);    
         return {
-            expiresIn: '10s', // process.env.EXPIRESIN,
+            expiresIn: '2m', // process.env.EXPIRESIN,
             accessToken,    
         };  
     }

@@ -4,6 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto/user.dto';
+import { OwnersGuard } from 'src/product/guards/owner.guard';
 
 @Controller('product')
 export class ProductController {
@@ -22,6 +23,7 @@ export class ProductController {
   }
 
   @Get(':id') // urls = /product/:id
+  @UseGuards(AuthGuard(), OwnersGuard) // --> validate that the user us looged in and the product was created by the user
   findOne(@Param('id') id: number) {
     return this.productService.findOne(id);
   }
