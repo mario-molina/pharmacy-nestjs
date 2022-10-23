@@ -18,13 +18,12 @@ export class UserService {
   }
 
   async create(user: CreateUserDto) {
-
-    // check if the user exists in the db    
-    const userInDb = await this.userRepository.findOne({ 
-      where: { username : user.username } 
+    // check if the user exists in the db
+    const userInDb = await this.userRepository.findOne({
+      where: { username: user.username },
     });
     if (userInDb) {
-        throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);    
+      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
 
     user.created_date = new Date(user.created_date);
@@ -40,7 +39,10 @@ export class UserService {
 
   async findOne(options?: object): Promise<UserDto> {
     const user = await this.userRepository.findOne(options);
-    return toUserDto(user);
+    if (user != null)
+      return toUserDto(user);
+    else
+      return null;
   }
 
   async update(id: number, user: UpdateUserDto) {
@@ -52,26 +54,24 @@ export class UserService {
     return await this.userRepository.delete(id);
   }
 
-  async findByLogin({ username, password }: LoginUserDto): Promise<UserDto> {    
+  async findByLogin({ username, password }: LoginUserDto): Promise<UserDto> {
     const user = await this.userRepository.findOne({ where: { username } });
-    
+
     if (!user) {
-        throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);    
+      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
-    
-    // compare passwords    
+
+    // compare passwords
     const areEqual = await comparePasswords(user.password, password);
-    
+
     if (!areEqual) {
-        throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);    
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
-    
-    return toUserDto(user);  
+
+    return toUserDto(user);
   }
 
   async findByPayload({ username }: any): Promise<UserDto> {
-    return await this.findOne({ where:  { username } });  
+    return await this.findOne({ where: { username } });
   }
-
-  
 }

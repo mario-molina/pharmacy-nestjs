@@ -1,23 +1,30 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-import { UserService } from "../user.service";
+import { UserService } from '../user.service';
 
 @ValidatorConstraint({ name: 'UserExists', async: true })
 @Injectable()
 export class UserExistsRule implements ValidatorConstraintInterface {
-  constructor(private usersService: UserService) {}
+  private readonly userService;
 
-  async validate(value: number) {
+  constructor(usersService: UserService) {
+    this.userService = usersService;
+  }
+
+  async validate(value: string) {
+    // If returns false then validation failed, if returns true then validation passed
+    let user;
     try {
-      await this.usersService.findOne({id: value});
+      user = await this.userService.findOne({ where: { username: value } });
     } catch (e) {
       return false;
     }
 
-    return true;
+    return user == null;
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `User doesn't exist`;
+    // default message when validate() returns false
+    return `User already exists`;
   }
 }
