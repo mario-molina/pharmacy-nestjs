@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpException, HttpStatus } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -12,9 +12,12 @@ export class ProductController {
 
   @Post()
   @UseGuards(AuthGuard()) 
-  create(@Body() createProductDto: CreateProductDto, @Req() req: any) {
+  async create(@Body() createProductDto: CreateProductDto, @Req() req: any) {
     const user = <UserDto>req.user;
-    return this.productService.create(user, createProductDto);
+    let res = await this.productService.create(user, createProductDto);
+    if(!res.isSuccessful())
+      throw new HttpException(res.getMessage(), res.getCode());
+    return res
   }
 
   @Get()
@@ -23,9 +26,11 @@ export class ProductController {
   }
 
   @Get(':id') // urls = /product/:id
-  @UseGuards(AuthGuard(), OwnersGuard) // --> validate that the user us looged in and the product was created by the user
-  findOne(@Param('id') id: number) {
-    return this.productService.findOne(id);
+  async findOne(@Param('id') id: number) {
+    let res = await this.productService.findOne(id);
+    if(!res.isSuccessful())
+      throw new HttpException(res.getMessage(), res.getCode());
+    return res
   }
 
   @Patch(':id')
@@ -34,7 +39,12 @@ export class ProductController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.productService.remove(id);
+  @UseGuards(AuthGuard(), OwnersGuard) // --> validate that the user us looged in and the product was created by the user
+  async remove(@Param('id') id: number) {
+    console.log('dieee');
+    let res = await this.productService.remove(id);
+    if(!res.isSuccessful())
+      throw new HttpException(res.getMessage(), res.getCode());
+    return res
   }
 }

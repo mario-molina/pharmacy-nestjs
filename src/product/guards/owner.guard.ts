@@ -18,7 +18,8 @@ export class OwnersGuard implements CanActivate {
         const requestObj = context.switchToHttp().getRequest();
         const qryParams = requestObj.params;
         const idProduct = qryParams.id;
-        const product = await this.getProduct(idProduct);
+        const serviceReponse = await this.getProduct(idProduct);
+        const product = serviceReponse.data;
         if (product != null) {
             return product.owner == requestObj.user.id
         }else{
