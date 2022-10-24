@@ -24,10 +24,14 @@ export class ProductService {
     let username = user.username;
     // get the user from db    
     const owner = await this.userService.findOne({ where: { username } });
-    product.created_date = new Date(product.created_date);
+    product.created_date = new Date();
     product.owner = owner;
     await this.productRepository.insert(product);
-    return product;
+    return {
+      code: 201,
+      message: 'Product created sucessfuly',
+      data: product,
+    };
   }
 
   async findAll() {
