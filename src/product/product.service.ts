@@ -6,6 +6,8 @@ import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from 'src/user/dto/user.dto';
 import { UserService } from 'src/user/user.service';
+import {LoginStatus} from "../auth/helper/login-status.interface";
+import {AppResponse} from "../shared/repsonse.interface";
 
 @Injectable()
 export class ProductService {
@@ -20,9 +22,9 @@ export class ProductService {
     this.userService = userService;
   }
 
-  async create(user: UserDto, product: CreateProductDto, ) {
-    let username = user.username;
-    // get the user from db    
+  async create(user: UserDto, product: CreateProductDto, ): Promise<AppResponse> {
+    const username = user.username;
+    // get the user from db
     const owner = await this.userService.findOne({ where: { username } });
     product.created_date = new Date();
     product.owner = owner;
