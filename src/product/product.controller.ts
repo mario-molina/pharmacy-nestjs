@@ -17,6 +17,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto/user.dto';
 import { OwnersGuard } from 'src/product/guards/owner.guard';
+import { Pagination } from 'src/pagination/pagination';
+import { Product } from './entities/product.entity';
 
 @Controller('product')
 export class ProductController {
@@ -35,6 +37,14 @@ export class ProductController {
   @Get()
   findAll() {
     return this.productService.findAll();
+  }
+
+  @Get('/paginated')
+  async index(@Req() request): Promise<Pagination<Product>>{
+    return await this.productService.paginate({
+      limit: request.query.hasOwnProperty('limit') ? request.query.limit : 3,
+      page: request.query.hasOwnProperty('page') ? request.query.page : 0,
+    });
   }
 
   @Get(':id') // urls = /product/:id

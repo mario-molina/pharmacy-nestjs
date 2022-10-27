@@ -7,6 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from 'src/user/dto/user.dto';
 import { UserService } from 'src/user/user.service';
 import { ServiceResponse } from '../shared/service-response.class';
+import { PaginationOptionsInterface } from 'src/pagination/pagination.options.interface';
+import { Pagination } from 'src/pagination/pagination';
 
 @Injectable()
 export class ProductService {
@@ -44,10 +46,22 @@ export class ProductService {
     return await this.productRepository.find();
   }
 
+  async paginate(options: PaginationOptionsInterface,): Promise<Pagination<Product>>{
+    const [results, total] = await this.productRepository.findAndCount({
+      take: options.limit,
+      skip: options.page * options.limit, // think this needs to be page * limit
+    });
+
+    return new Pagination<Product>({
+      results,
+      total,
+    });
+  }
+
   async findOne(id: number): Promise<ServiceResponse> {
     const response = new ServiceResponse();
     try {
-      const product = await this.productRepository.findOnex({
+      const product = await this.productRepository.findOne({
         where: { id: id },
       });
       if (product != null) response.setData(product);
