@@ -1,46 +1,47 @@
+import { HttpStatus } from '@nestjs/common';
+
 export class ServiceResponse {
   private success: boolean;
   private code: number;
   private message: string;
   private data: any;
 
-  constructor(){
+  constructor() {
     this.success = true;
-    this.code = 200;
+    this.code = HttpStatus.OK;
     this.message = '';
     this.data = null;
   }
 
-  setSuccess(success:boolean){
+  setSuccess(success: boolean) {
     this.success = success;
   }
 
-  isSuccessful(){
+  isSuccessful() {
     return this.success;
   }
 
-  setCode(code:number) {
+  setCode(code: number) {
     this.code = code;
   }
 
-  getCode(): number{
-    return this.code
+  getCode(): number {
+    return this.code;
   }
 
-  setMessage(message:string) {
+  setMessage(message: string) {
     this.message = message;
   }
 
-  getMessage(): string{
-    return this.message
+  getMessage(): string {
+    return this.message;
   }
 
-  setData(data:any) {
+  setData(data: any) {
     this.data = data;
   }
 
-  getData(): any{
-    return this.data
+  getData(): any {
+    return this.data;
   }
-  
 }

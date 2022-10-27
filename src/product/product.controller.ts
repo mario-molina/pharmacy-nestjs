@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -11,13 +23,13 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @UseGuards(AuthGuard()) 
+  @UseGuards(AuthGuard())
   async create(@Body() createProductDto: CreateProductDto, @Req() req: any) {
     const user = <UserDto>req.user;
-    let res = await this.productService.create(user, createProductDto);
-    if(!res.isSuccessful())
+    const res = await this.productService.create(user, createProductDto);
+    if (!res.isSuccessful())
       throw new HttpException(res.getMessage(), res.getCode());
-    return res
+    return res;
   }
 
   @Get()
@@ -27,24 +39,26 @@ export class ProductController {
 
   @Get(':id') // urls = /product/:id
   async findOne(@Param('id') id: number) {
-    let res = await this.productService.findOne(id);
-    if(!res.isSuccessful())
+    const res = await this.productService.findOne(id);
+    if (!res.isSuccessful())
       throw new HttpException(res.getMessage(), res.getCode());
-    return res
+    return res;
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id, updateProductDto);
+  async update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
+    const res = await this.productService.update(id, updateProductDto);
+    if (!res.isSuccessful())
+      throw new HttpException(res.getMessage(), res.getCode());
+    return res;
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard(), OwnersGuard) // --> validate that the user us looged in and the product was created by the user
+  @UseGuards(AuthGuard(), OwnersGuard) // --> validate that the user us logged in and the product was created by the user
   async remove(@Param('id') id: number) {
-    console.log('dieee');
-    let res = await this.productService.remove(id);
-    if(!res.isSuccessful())
+    const res = await this.productService.remove(id);
+    if (!res.isSuccessful())
       throw new HttpException(res.getMessage(), res.getCode());
-    return res
+    return res;
   }
 }
