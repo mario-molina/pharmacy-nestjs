@@ -1,3 +1,4 @@
+import { Category } from "src/category/entities/category.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductLike } from "../../product-likes/entities/product-like.entity";
@@ -16,6 +17,9 @@ export class Product {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   price: number;
 
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  image: string;
+
   @Column({ type: 'datetime' })
   created_date: Date;
 
@@ -28,4 +32,10 @@ export class Product {
   @ManyToOne(type => User)
   @JoinColumn({ name: 'owner' }) // --> name of the column in database
   userId: User;
+
+  @Column({ name: 'categoryId' })
+  categoryId: number;
+  @ManyToOne(type => Category)
+  @JoinColumn({ name: 'categoryId' })
+  category: Category;
 }

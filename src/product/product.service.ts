@@ -9,6 +9,7 @@ import { UserService } from 'src/user/user.service';
 import { ServiceResponse } from '../shared/service-response.class';
 import { PaginationOptionsInterface } from 'src/pagination/pagination.options.interface';
 import { Pagination } from 'src/pagination/pagination';
+import { Category } from 'src/category/entities/category.entity';
 
 @Injectable()
 export class ProductService {
@@ -23,7 +24,7 @@ export class ProductService {
     this.userService = userService;
   }
 
-  async create(user: UserDto, product: CreateProductDto, ): Promise<ServiceResponse> {
+  async create(user: UserDto, category: Category, product: CreateProductDto, ): Promise<ServiceResponse> {
     const response = new ServiceResponse();
     try {
       const username = user.username;
@@ -46,8 +47,10 @@ export class ProductService {
     return await this.productRepository.find();
   }
 
-  async paginate(options: PaginationOptionsInterface,): Promise<Pagination<Product>>{
+  async fetchPaginated(options: PaginationOptionsInterface,): Promise<Pagination<Product>>{
     const [results, total] = await this.productRepository.findAndCount({
+      //where: category ? { name: Like(`%${keyword}%`) } : {},
+      order: { name: 'ASC' },
       take: options.limit,
       skip: options.page * options.limit, // think this needs to be page * limit
     });

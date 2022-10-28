@@ -19,16 +19,19 @@ import { UserDto } from 'src/user/dto/user.dto';
 import { OwnersGuard } from 'src/product/guards/owner.guard';
 import { Pagination } from 'src/pagination/pagination';
 import { Product } from './entities/product.entity';
+import { CategoryService } from 'src/category/category.service';
+import { Category } from 'src/category/entities/category.entity';
 
 @Controller('product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService, private readonly categoryService: CategoryService) {}
 
   @Post()
   @UseGuards(AuthGuard())
   async create(@Body() createProductDto: CreateProductDto, @Req() req: any) {
     const user = <UserDto>req.user;
-    const res = await this.productService.create(user, createProductDto);
+    const category = await this.categoryService.getById(req.category_id);
+    const res = await this.productService.create(user, category, createProductDto);
     if (!res.isSuccessful())
       throw new HttpException(res.getMessage(), res.getCode());
     return res;
@@ -40,9 +43,9 @@ export class ProductController {
   }
 
   @Get('/paginated')
-  async index(@Req() request): Promise<Pagination<Product>>{
-    return await this.productService.paginate({
-      limit: request.query.hasOwnProperty('limit') ? request.query.limit : 3,
+  async findAllPaginated(@Req() request): Promise<Pagination<Product>>{
+    return await this.productService.fetchPaginated({
+      limit: request.query.hasOwnProperty('limit') ? request.query.limit : 5,
       page: request.query.hasOwnProperty('page') ? request.query.page : 0,
     });
   }
