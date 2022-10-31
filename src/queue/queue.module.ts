@@ -17,4 +17,4 @@ import { BullModule } from '@nestjs/bull';
     BullModule, // <— this is important!
   ],
 })
-export class RedisModule {}
+export class QueueModule {}

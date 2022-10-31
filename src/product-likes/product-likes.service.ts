@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { ProductLike } from './entities/product-like.entity';
 import { ProductService } from '../product/product.service';
-import {UpdateLikesService} from "./update-likes.service";
+import { UpdateLikesService } from './jobs/producer/update-likes.service';
 
 @Injectable()
 export class ProductLikesService {

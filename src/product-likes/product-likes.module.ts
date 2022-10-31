@@ -7,13 +7,14 @@ import { ProductLike } from './entities/product-like.entity';
 import { UserModule } from '../user/user.module';
 import { ProductModule } from '../product/product.module';
 import { AuthModule } from '../auth/auth.module';
-import {UpdateLikesService} from "./update-likes.service";
-import {RedisModule} from "../redis/redis.module";
+import { UpdateLikesService } from './jobs/producer/update-likes.service';
+import { QueueModule } from 'src/queue/queue.module';
+import { UpdateLikesConsumer } from './jobs/consumer/update-like-consumer.service';
 
 @Module({
   controllers: [ProductLikesController],
-  providers: [ProductLikesService, UpdateLikesService],
-  imports: [TypeOrmModule.forFeature([ProductLike]), DatabaseModule, UserModule, ProductModule, AuthModule, RedisModule],
-  exports: [UpdateLikesService],
+  providers: [ProductLikesService, UpdateLikesService, UpdateLikesConsumer],
+  imports: [TypeOrmModule.forFeature([ProductLike]), DatabaseModule, UserModule, ProductModule, AuthModule, QueueModule],
+  exports: [UpdateLikesService, UpdateLikesConsumer],
 })
 export class ProductLikesModule {}

@@ -9,7 +9,6 @@ import {
   UseGuards,
   Req,
   HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -20,7 +19,6 @@ import { OwnersGuard } from 'src/product/guards/owner.guard';
 import { Pagination } from 'src/pagination/pagination';
 import { Product } from './entities/product.entity';
 import { CategoryService } from 'src/category/category.service';
-import { Category } from 'src/category/entities/category.entity';
 
 @Controller('product')
 export class ProductController {
