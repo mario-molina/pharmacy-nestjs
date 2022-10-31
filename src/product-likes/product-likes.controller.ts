@@ -1,15 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpException} from '@nestjs/common';
 import { ProductLikesService } from './product-likes.service';
 import { CreateProductLikeDto } from './dto/create-product-like.dto';
 import { UpdateProductLikeDto } from './dto/update-product-like.dto';
+import {AuthGuard} from "@nestjs/passport";
+import {CreateProductDto} from "../product/dto/create-product.dto";
+import {UserDto} from "../user/dto/user.dto";
 
 @Controller('product-likes')
 export class ProductLikesController {
-  constructor(private readonly productLikesService: ProductLikesService) {}
+  private readonly productLikesService;
+
+  constructor(productLikesService: ProductLikesService) {
+    this.productLikesService = productLikesService;
+  }
 
   @Post()
-  create(@Body() createProductLikeDto: CreateProductLikeDto) {
-    return this.productLikesService.create(createProductLikeDto);
+  @UseGuards(AuthGuard())
+  async create(@Body() createProductLikeDto: CreateProductLikeDto, @Req() req: any) {
+    const user = <UserDto>req.user;
+    const res = await this.productLikesService.create(user, createProductLikeDto);
+    if (!res.isSuccessful())
+      throw new HttpException(res.getMessage(), res.getCode());
+    return res;
   }
 
   @Get()

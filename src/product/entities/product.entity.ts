@@ -1,7 +1,7 @@
-import { Category } from "src/category/entities/category.entity";
-import { User } from "src/user/entities/user.entity";
+import { Category } from 'src/category/entities/category.entity';
+import { User } from 'src/user/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ProductLike } from "../../product-likes/entities/product-like.entity";
+import { ProductLike } from '../../product-likes/entities/product-like.entity';
 
 @Entity('product')
 export class Product {
@@ -28,7 +28,7 @@ export class Product {
 
   // add column explicitly here
   @Column({ name: 'owner' }) // --> name of the column in database
-  owner: number;  // --> object field
+  owner: number; // --> object field
   @ManyToOne(type => User)
   @JoinColumn({ name: 'owner' }) // --> name of the column in database
   userId: User;
@@ -38,4 +38,7 @@ export class Product {
   @ManyToOne(type => Category)
   @JoinColumn({ name: 'categoryId' })
   category: Category;
+
+  @Column({ type: 'integer', nullable: true })
+  total_likes: number;
 }

@@ -9,6 +9,6 @@ import { User } from './entities/user.entity';
   controllers: [UserController],
   providers: [UserService],
   imports: [TypeOrmModule.forFeature([User]), DatabaseModule], // TypeOrmModule.forFeature execute "migrations" for entities defined in array
-  exports: [UserService]
+  exports: [UserService],
 })
 export class UserModule {}
