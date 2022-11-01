@@ -1,6 +1,5 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ProductLikeDto } from './dto/product-like.dto';
-import { UpdateProductLikeDto } from './dto/update-product-like.dto';
 import { UserDto } from '../user/dto/user.dto';
 import { ServiceResponse } from '../shared/service-response.class';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,8 +37,8 @@ export class ProductLikesService {
       const user = await this.userService.findOne({ where: { username } });
       const product = await this.productService.findBy({ where: { id } });
       productLike.created_date = new Date();
-      productLike.userId = user;
-      productLike.productId = product;
+      productLike.user = user;
+      productLike.product = product;
       await this.productLikeRepository.insert(productLike);
       response.setCode(HttpStatus.CREATED);
       response.setData(productLike);
@@ -58,15 +57,21 @@ export class ProductLikesService {
     try {
       const username = userDto.username;
       const id = productLike.product;
+
       // get the user from db
       const user = await this.userService.findOne({ where: { username } });
       const product = await this.productService.findBy({ where: { id } });
-      productLike.created_date = new Date();
-      productLike.userId = user;
-      productLike.productId = product;
-      await this.productLikeRepository.insert(productLike);
-      response.setCode(HttpStatus.CREATED);
-      response.setData(productLike);
+      const likes = await this.productLikeRepository.find({
+        where: { 
+          user: {id: user.id}, // Because 'user' is an FK
+          product: {id: product.id} // Because 'product' is an FK
+        },
+      });
+
+      const likesId = likes.map(like => like.id);
+      await this.productLikeRepository.delete(likesId);
+      response.setCode(HttpStatus.OK);
+      response.setData(likes);
       await this.updateLikesService.updateProductLikes(product);
     } catch (e) {
       response.setSuccess(false);
@@ -76,4 +81,21 @@ export class ProductLikesService {
 
     return response;
   }
+
+  async getLikesCount(productId: number) {
+    let count = 0
+    try {
+      const likes = await this.productLikeRepository.find({
+        where: {
+          product: {id: productId} // Because 'product' is an FK
+        },
+      });
+      count =  likes.length;
+    } catch (e) {
+      // log error...
+    }
+
+    return count;
+  }
+
 }

@@ -10,7 +10,6 @@ import { ServiceResponse } from '../shared/service-response.class';
 import { PaginationOptionsInterface } from 'src/pagination/pagination.options.interface';
 import { Pagination } from 'src/pagination/pagination';
 import { Category } from 'src/category/entities/category.entity';
-import {toUserDto} from "../shared/mapper";
 
 @Injectable()
 export class ProductService {

@@ -5,6 +5,6 @@ import { Product } from '../../product/entities/product.entity';
 export class ProductLikeDto {
   @IsNumber() product: number;
   productId: Product;
-  userId: User;
+  user: User;
   created_date: Date;
 }
