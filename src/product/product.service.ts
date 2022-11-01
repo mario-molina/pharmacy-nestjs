@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Repository } from 'typeorm';
@@ -69,10 +69,14 @@ export class ProductService {
       });
       if (product != null) response.setData(product);
       else
-        throw new HttpException('Product was not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException(`Product was not found!`);
     } catch (e) {
+      if (e instanceof NotFoundException) {
+        response.setCode(HttpStatus.NOT_FOUND);
+      } else {
+        response.setCode(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
       response.setSuccess(false);
-      response.setCode(HttpStatus.INTERNAL_SERVER_ERROR);
       response.setMessage(e.message);
     }
 

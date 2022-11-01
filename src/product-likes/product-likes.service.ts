@@ -36,6 +36,10 @@ export class ProductLikesService {
       // get the user from db
       const user = await this.userService.findOne({ where: { username } });
       const product = await this.productService.findBy({ where: { id } });
+
+      if(product == null)
+        throw new NotFoundException(`Product was not found!`);
+
       productLike.created_date = new Date();
       productLike.user = user;
       productLike.product = product;
@@ -44,8 +48,14 @@ export class ProductLikesService {
       response.setData(productLike);
       await this.updateLikesService.updateProductLikes(product);
     } catch (e) {
+      if (e instanceof NotFoundException) {
+        response.setCode(HttpStatus.NOT_FOUND);
+      } else if (typeof e === "string") {
+        // error as a string action here
+      } else {
+        response.setCode(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
       response.setSuccess(false);
-      response.setCode(HttpStatus.INTERNAL_SERVER_ERROR);
       response.setMessage(e.message);
     }
 
@@ -61,6 +71,10 @@ export class ProductLikesService {
       // get the user from db
       const user = await this.userService.findOne({ where: { username } });
       const product = await this.productService.findBy({ where: { id } });
+
+      if(product == null)
+        throw new NotFoundException(`Product was not found!`);
+
       const likes = await this.productLikeRepository.find({
         where: { 
           user: {id: user.id}, // Because 'user' is an FK
@@ -74,8 +88,14 @@ export class ProductLikesService {
       response.setData(likes);
       await this.updateLikesService.updateProductLikes(product);
     } catch (e) {
+      if (e instanceof NotFoundException) {
+        response.setCode(HttpStatus.NOT_FOUND);
+      } else if (typeof e === "string") {
+        // error as a string action here
+      } else {
+        response.setCode(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
       response.setSuccess(false);
-      response.setCode(HttpStatus.INTERNAL_SERVER_ERROR);
       response.setMessage(e.message);
     }
 
