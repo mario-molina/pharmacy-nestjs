@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CreateProductLikeDto } from './dto/create-product-like.dto';
+import { ProductLikeDto } from './dto/product-like.dto';
 import { UpdateProductLikeDto } from './dto/update-product-like.dto';
 import { UserDto } from '../user/dto/user.dto';
 import { ServiceResponse } from '../shared/service-response.class';
@@ -29,7 +29,7 @@ export class ProductLikesService {
     this.updateLikesService = updateLikesService;
   }
 
-  async create(userDto: UserDto, productLike: CreateProductLikeDto) {
+  async create(userDto: UserDto, productLike: ProductLikeDto) {
     const response = new ServiceResponse();
     try {
       const username = userDto.username;
