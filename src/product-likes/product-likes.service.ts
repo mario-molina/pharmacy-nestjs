@@ -53,19 +53,27 @@ export class ProductLikesService {
     return response;
   }
 
-  findAll() {
-    return `This action returns all productLikes`;
-  }
+  async remove(userDto: UserDto, productLike: ProductLikeDto) {
+    const response = new ServiceResponse();
+    try {
+      const username = userDto.username;
+      const id = productLike.product;
+      // get the user from db
+      const user = await this.userService.findOne({ where: { username } });
+      const product = await this.productService.findBy({ where: { id } });
+      productLike.created_date = new Date();
+      productLike.userId = user;
+      productLike.productId = product;
+      await this.productLikeRepository.insert(productLike);
+      response.setCode(HttpStatus.CREATED);
+      response.setData(productLike);
+      await this.updateLikesService.updateProductLikes(product);
+    } catch (e) {
+      response.setSuccess(false);
+      response.setCode(HttpStatus.INTERNAL_SERVER_ERROR);
+      response.setMessage(e.message);
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} productLike`;
-  }
-
-  update(id: number, updateProductLikeDto: UpdateProductLikeDto) {
-    return `This action updates a #${id} productLike`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} productLike`;
+    return response;
   }
 }
