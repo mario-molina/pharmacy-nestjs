@@ -7,6 +7,7 @@ import { ProductLikesModule } from './product-likes/product-likes.module';
 import { AuthModule } from './auth/auth.module';
 import { UserExistsRule } from './user/validation/user-exists.rule';
 import { CategoryModule } from './category/category.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CategoryModule } from './category/category.module';
     ProductLikesModule,
     AuthModule,
     CategoryModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserExistsRule], // add here rules classes that needs dependency injection

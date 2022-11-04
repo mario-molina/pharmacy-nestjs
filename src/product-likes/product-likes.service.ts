@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ProductLikeDto } from './dto/product-like.dto';
 import { UserDto } from '../user/dto/user.dto';
 import { ServiceResponse } from '../shared/service-response.class';
@@ -8,6 +8,7 @@ import { UserService } from '../user/user.service';
 import { ProductLike } from './entities/product-like.entity';
 import { ProductService } from '../product/product.service';
 import { UpdateLikesService } from './jobs/producer/update-likes.service';
+import { Logger } from 'winston';
 
 @Injectable()
 export class ProductLikesService {
@@ -15,17 +16,20 @@ export class ProductLikesService {
   private readonly userService;
   private readonly productService;
   private readonly updateLikesService;
+  private readonly logger: Logger
 
   constructor(
     @InjectRepository(ProductLike) productLikeRepository: Repository<ProductLike>,
     userService: UserService,
     productService: ProductService,
     updateLikesService: UpdateLikesService,
+    @Inject('winston') logger: Logger
   ) {
     this.productLikeRepository = productLikeRepository;
     this.userService = userService;
     this.productService = productService;
     this.updateLikesService = updateLikesService;
+    this.logger = logger;
   }
 
   async create(userDto: UserDto, productLike: ProductLikeDto) {
@@ -98,6 +102,9 @@ export class ProductLikesService {
       response.setSuccess(false);
       response.setMessage(e.message);
     }
+
+    const today = new Date();
+    this.logger.info('Product with ID:'+productLike.product+' was deleted on '+today);
 
     return response;
   }
