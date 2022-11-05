@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   HttpException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -19,7 +20,9 @@ import { OwnersGuard } from 'src/product/guards/owner.guard';
 import { Pagination } from 'src/pagination/pagination';
 import { Product } from './entities/product.entity';
 import { CategoryService } from 'src/category/category.service';
+import { ErrorsInterceptor } from 'src/logger/logging.interceptor';
 
+@UseInterceptors(ErrorsInterceptor)
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService, private readonly categoryService: CategoryService) {}

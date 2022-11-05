@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { utilities, WinstonModule } from 'nest-winston';
 import { resolve } from 'path';
 import * as winston from 'winston';
+import { ErrorsInterceptor } from './logging.interceptor';
 
 @Module({
     imports: [
@@ -26,5 +27,7 @@ import * as winston from 'winston';
           ],
         }),
       ],
+      providers: [ErrorsInterceptor],  
+      exports: [ErrorsInterceptor]
 })
 export class LoggerModule {}
